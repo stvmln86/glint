@@ -18,6 +18,14 @@ func TestMockInserts(t *testing.T) {
 	assert.NoError(t, err)
 }
 
+func TestAssertBool(t *testing.T) {
+	// setup
+	db := DB()
+
+	// success
+	AssertBool(t, db, "select exists(select * from Notes)", true)
+}
+
 func TestAssertInt(t *testing.T) {
 	// setup
 	db := DB()

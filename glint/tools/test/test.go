@@ -20,6 +20,14 @@ const MockInserts = `
 	insert into Pages (init, note, body) values (2000, 1, 'Bravo one.\n');
 `
 
+// AssertBool asserts a database query result is equal to an integer.
+func AssertBool(t *testing.T, db *sqlx.DB, code string, want bool) {
+	var data bool
+	err := db.Get(&data, code)
+	assert.Equal(t, want, data)
+	assert.NoError(t, err)
+}
+
 // AssertInt asserts a database query result is equal to an integer.
 func AssertInt(t *testing.T, db *sqlx.DB, code string, want int) {
 	var data int
