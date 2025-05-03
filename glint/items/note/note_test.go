@@ -2,12 +2,41 @@ package note
 
 import (
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stvmln86/glint/glint/tools/bolt"
 	"github.com/stvmln86/glint/glint/tools/neat"
 	"github.com/stvmln86/glint/glint/tools/test"
 )
+
+func TestCreate(t *testing.T) {
+	// setup
+	db := test.MockDB(t)
+	hash := neat.Hash("Charlie.\n")
+	init := neat.Unix(time.Now())
+
+	// success
+	note, err := Create(db, "charlie", "Charlie.\n")
+	assert.Equal(t, "charlie", note.Name)
+	assert.Equal(t, "Charlie.\n", note.Body)
+	assert.Equal(t, hash, note.Hash)
+	assert.Equal(t, init, note.Init)
+	assert.NoError(t, err)
+
+	// success - check database
+	pairs, ok, err := bolt.Get(db, "charlie")
+	assert.Equal(t, "Charlie.\n", pairs["body"])
+	assert.Equal(t, hash, pairs["hash"])
+	assert.Equal(t, init, pairs["init"])
+	assert.True(t, ok)
+	assert.NoError(t, err)
+
+	// error - already exists,
+	note, err = Create(db, "charlie", "Charlie.\n")
+	assert.Nil(t, note)
+	assert.EqualError(t, err, `cannot create note "charlie" - already exists`)
+}
 
 func TestGet(t *testing.T) {
 	// setup
@@ -75,9 +104,10 @@ func TestUpdate(t *testing.T) {
 	assert.NoError(t, err)
 
 	// success - check database
-	pairs, _, err := bolt.Get(db, "alpha")
+	pairs, ok, err := bolt.Get(db, "alpha")
 	assert.Equal(t, "Body.\n", pairs["body"])
 	assert.Equal(t, hash, pairs["hash"])
 	assert.Equal(t, "1000", pairs["init"])
+	assert.True(t, ok)
 	assert.NoError(t, err)
 }

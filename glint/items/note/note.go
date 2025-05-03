@@ -3,6 +3,7 @@ package note
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/stvmln86/glint/glint/tools/bolt"
 	"github.com/stvmln86/glint/glint/tools/neat"
@@ -16,6 +17,32 @@ type Note struct {
 	Body string
 	Hash string
 	Init string
+}
+
+// Create creates and returns a new Note.
+func Create(db *bbolt.DB, name, body string) (*Note, error) {
+	name = neat.Name(name)
+	ok, err := bolt.Exists(db, name)
+
+	switch {
+	case ok:
+		return nil, fmt.Errorf("cannot create note %q - already exists", name)
+	case err != nil:
+		return nil, fmt.Errorf("cannot create note %q - %w", name, err)
+	}
+
+	body = neat.Body(body)
+	pairs := map[string]string{
+		"body": body,
+		"hash": neat.Hash(body),
+		"init": neat.Unix(time.Now()),
+	}
+
+	if err := bolt.Set(db, name, pairs); err != nil {
+		return nil, fmt.Errorf("cannot create note %q - %w", name, err)
+	}
+
+	return Get(db, name)
 }
 
 // Get returns an existing Note by name.
@@ -55,13 +82,15 @@ func (n *Note) Exists() (bool, error) {
 // Update updates the existing Note's body and hash.
 func (n *Note) Update(body string) error {
 	body = neat.Body(body)
-	hash := neat.Hash(body)
-	pairs := map[string]string{"body": body, "hash": hash}
+	pairs := map[string]string{
+		"body": body,
+		"hash": neat.Hash(body),
+	}
 
 	if err := bolt.Set(n.DB, n.Name, pairs); err != nil {
 		return fmt.Errorf("cannot update note %q - %w", n.Name, err)
 	}
 
-	n.Body, n.Hash = body, hash
+	n.Body, n.Hash = body, pairs["hash"]
 	return nil
 }
