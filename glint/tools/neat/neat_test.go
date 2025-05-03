@@ -13,25 +13,10 @@ func TestBody(t *testing.T) {
 	assert.Equal(t, "Body.\n", body)
 }
 
-func TestHash(t *testing.T) {
-	// success
-	hash := Hash("data")
-	assert.Equal(t, "a948904f2f0f479b8f8197694b30184b0d2ed1c1cd2a1ec0fb85d299a192a447", hash)
-}
-
 func TestName(t *testing.T) {
 	// success
 	name := Name("\tNAME\n")
 	assert.Equal(t, "name", name)
-}
-
-func TestPairs(t *testing.T) {
-	// success
-	pairs := Pairs("\tBody.\n")
-	assert.Equal(t, map[string]string{
-		"body": "Body.\n",
-		"hash": "a948904f2f0f479b8f8197694b30184b0d2ed1c1cd2a1ec0fb85d299a192a447",
-	}, pairs)
 }
 
 func TestTime(t *testing.T) {

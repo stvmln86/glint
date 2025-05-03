@@ -27,8 +27,8 @@ func TestCreate(t *testing.T) {
 	assert.NoError(t, err)
 
 	// success - check database
-	pairs, err := bolt.Get(db, "charlie", init)
-	assert.Equal(t, "Charlie.\n", pairs["body"])
+	body, err := bolt.Get(db, "charlie", init)
+	assert.Equal(t, "Charlie.\n", body)
 	assert.NoError(t, err)
 }
 
@@ -105,7 +105,7 @@ func TestUpdate(t *testing.T) {
 	assert.NoError(t, err)
 
 	// success - check database
-	pairs, err := bolt.Get(note.DB, "alpha", init)
-	assert.Equal(t, "Body.\n", pairs["body"])
+	body, err := bolt.Get(note.DB, "alpha", init)
+	assert.Equal(t, "Body.\n", body)
 	assert.NoError(t, err)
 }

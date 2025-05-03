@@ -20,10 +20,10 @@ type Note struct {
 // Create creates and returns a new Note.
 func Create(db *bbolt.DB, name, body string) (*Note, error) {
 	name = neat.Name(name)
+	body = neat.Body(body)
 	init := neat.Unix(time.Now())
-	pairs := neat.Pairs(body)
 
-	if err := bolt.Set(db, name, init, pairs); err != nil {
+	if err := bolt.Set(db, name, init, body); err != nil {
 		return nil, fmt.Errorf("cannot create note %s - %w", name, err)
 	}
 

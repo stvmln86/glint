@@ -9,24 +9,14 @@ import (
 )
 
 // MockData is a map of mock database data for unit testing.
-var MockData = map[string]map[string]map[string]string{
+var MockData = map[string]map[string]string{
 	"alpha": {
-		"1000": {
-			"body": "Alpha (old).\n",
-			"hash": "2038ace1dd703f9661fd9657b7a842257c0082e640103d702f31f0264aa39050",
-		},
-
-		"1100": {
-			"body": "Alpha (new).\n",
-			"hash": "c4eb3161e551ad770fe506df8e76cae3f36785a243482edae532703100a103ea",
-		},
+		"1000": "Alpha one.\n",
+		"1100": "Alpha two.\n",
 	},
 
 	"bravo": {
-		"2000": {
-			"body": "Bravo.\n",
-			"hash": "65c1f9293df813a992d69f4fb83d430530e40dc8630409b30d0f8e58b07b1e14",
-		},
+		"2000": "Bravo.\n",
 	},
 }
 
@@ -36,15 +26,11 @@ func MockDB(t *testing.T) *bbolt.DB {
 	db, _ := bbolt.Open(dest, 0777, nil)
 
 	db.Update(func(tx *bbolt.Tx) error {
-		for buck, items := range MockData {
+		for buck, pairs := range MockData {
 			bobj, _ := tx.CreateBucket([]byte(buck))
 
-			for subb, pairs := range items {
-				sobj, _ := bobj.CreateBucket([]byte(subb))
-
-				for attr, data := range pairs {
-					sobj.Put([]byte(attr), []byte(data))
-				}
+			for attr, data := range pairs {
+				bobj.Put([]byte(attr), []byte(data))
 			}
 		}
 

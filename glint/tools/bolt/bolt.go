@@ -3,58 +3,53 @@ package bolt
 
 import "go.etcd.io/bbolt"
 
-// Delete deletes an existing bucket or sub-bucket from a database.
-func Delete(db *bbolt.DB, buck string, subb ...string) error {
+// Delete deletes an existing bucket or pair  from a database.
+func Delete(db *bbolt.DB, buck string, attr ...string) error {
 	return db.Update(func(tx *bbolt.Tx) error {
-		if len(subb) == 0 {
+		if len(attr) == 0 {
 			return tx.DeleteBucket([]byte(buck))
 		}
 
 		if bobj := tx.Bucket([]byte(buck)); bobj != nil {
-			return bobj.DeleteBucket([]byte(subb[0]))
+			return bobj.Delete([]byte(attr[0]))
 		}
 
 		return nil
 	})
 }
 
-// Exists returns true if a bucket or sub-bucket exists in a database.
-func Exists(db *bbolt.DB, buck string, subb ...string) (bool, error) {
+// Exists returns true if a bucket or pair exists in a database.
+func Exists(db *bbolt.DB, buck string, attr ...string) (bool, error) {
 	var ok bool
 
 	return ok, db.View(func(tx *bbolt.Tx) error {
-		if len(subb) == 0 {
+		if len(attr) == 0 {
 			ok = tx.Bucket([]byte(buck)) != nil
 			return nil
 		}
 
 		if bobj := tx.Bucket([]byte(buck)); bobj != nil {
-			ok = bobj.Bucket([]byte(subb[0])) != nil
+			ok = bobj.Get([]byte(attr[0])) != nil
 		}
 
 		return nil
 	})
 }
 
-// Get returns the pairs of an existing sub-bucket from a database.
-func Get(db *bbolt.DB, buck, subb string) (map[string]string, error) {
-	var pairs = make(map[string]string)
+// Get returns an existing bucket pair's value from from a database.
+func Get(db *bbolt.DB, buck, attr string) (string, error) {
+	var data string
 
-	return pairs, db.View(func(tx *bbolt.Tx) error {
+	return data, db.View(func(tx *bbolt.Tx) error {
 		if bobj := tx.Bucket([]byte(buck)); bobj != nil {
-			if sobj := bobj.Bucket([]byte(subb)); sobj != nil {
-				return sobj.ForEach(func(attr []byte, data []byte) error {
-					pairs[string(attr)] = string(data)
-					return nil
-				})
-			}
+			data = string(bobj.Get([]byte(attr)))
 		}
 
 		return nil
 	})
 }
 
-// List returns all existing bucket or sub-bucket names from a database.
+// List returns all existing bucket names or bucket pair names from a database.
 func List(db *bbolt.DB, buck ...string) ([]string, error) {
 	var names []string
 
@@ -67,8 +62,8 @@ func List(db *bbolt.DB, buck ...string) ([]string, error) {
 		}
 
 		if bobj := tx.Bucket([]byte(buck[0])); bobj != nil {
-			return bobj.ForEachBucket(func(subb []byte) error {
-				names = append(names, string(subb))
+			return bobj.ForEach(func(attr, _ []byte) error {
+				names = append(names, string(attr))
 				return nil
 			})
 		}
@@ -77,25 +72,14 @@ func List(db *bbolt.DB, buck ...string) ([]string, error) {
 	})
 }
 
-// Set sets the pairs in a new or existing sub-bucket in a database.
-func Set(db *bbolt.DB, buck, subb string, pairs map[string]string) error {
+// Set sets a pair in a new or existing bucket in a database.
+func Set(db *bbolt.DB, buck, attr, data string) error {
 	return db.Update(func(tx *bbolt.Tx) error {
 		bobj, err := tx.CreateBucketIfNotExists([]byte(buck))
 		if err != nil {
 			return err
 		}
 
-		sobj, err := bobj.CreateBucketIfNotExists([]byte(subb))
-		if err != nil {
-			return err
-		}
-
-		for attr, data := range pairs {
-			if err := sobj.Put([]byte(attr), []byte(data)); err != nil {
-				return err
-			}
-		}
-
-		return nil
+		return bobj.Put([]byte(attr), []byte(data))
 	})
 }

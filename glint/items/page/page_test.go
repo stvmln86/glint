@@ -12,28 +12,25 @@ import (
 
 func xPage(t *testing.T) *Page {
 	db := test.MockDB(t)
-	pairs := test.MockData["alpha"]["1000"]
-	return &Page{db, "alpha", pairs["body"], pairs["hash"], "1000"}
+	return &Page{db, "alpha", "1000", "Alpha one.\n"}
 }
 
 func TestCreate(t *testing.T) {
 	// setup
 	db := test.MockDB(t)
-	hash := neat.Hash("Alpha (test).\n")
 	init := neat.Unix(time.Now())
 
 	// success
-	page, err := Create(db, "alpha", "Alpha (test).\n")
+	page, err := Create(db, "alpha", "Alpha test.\n")
 	assert.NotNil(t, page.DB)
 	assert.Equal(t, "alpha", page.Name)
-	assert.Equal(t, "Alpha (test).\n", page.Body)
-	assert.Equal(t, hash, page.Hash)
 	assert.Equal(t, init, page.Init)
+	assert.Equal(t, "Alpha test.\n", page.Body)
 	assert.NoError(t, err)
 
 	// success - check database
-	pairs, err := bolt.Get(db, "alpha", init)
-	assert.Equal(t, "Alpha (test).\n", pairs["body"])
+	body, err := bolt.Get(db, "alpha", init)
+	assert.Equal(t, "Alpha test.\n", body)
 	assert.NoError(t, err)
 
 	// error - does not exist
@@ -50,9 +47,8 @@ func TestGet(t *testing.T) {
 	page, err := Get(db, "alpha", "1000")
 	assert.NotNil(t, page.DB)
 	assert.Equal(t, "alpha", page.Name)
-	assert.Equal(t, "Alpha (old).\n", page.Body)
-	assert.Equal(t, test.MockData["alpha"]["1000"]["hash"], page.Hash)
 	assert.Equal(t, "1000", page.Init)
+	assert.Equal(t, "Alpha one.\n", page.Body)
 	assert.NoError(t, err)
 
 	// error - does not exist

@@ -23,17 +23,15 @@ func TestDelete(t *testing.T) {
 		return nil
 	})
 
-	// success - sub-bucket
+	// success - pair
 	err = Delete(db, "bravo", "2000")
 	assert.NoError(t, err)
 
 	// success - check database
 	db.View(func(tx *bbolt.Tx) error {
 		bobj := tx.Bucket([]byte("bravo"))
-		assert.NotNil(t, bobj)
-
-		sobj := bobj.Bucket([]byte("2000"))
-		assert.Nil(t, sobj)
+		data := bobj.Get([]byte("2000"))
+		assert.Nil(t, data)
 		return nil
 	})
 }
@@ -52,12 +50,12 @@ func TestExists(t *testing.T) {
 	assert.False(t, ok)
 	assert.NoError(t, err)
 
-	// success - sub-bucket, true
+	// success - pair, true
 	ok, err = Exists(db, "alpha", "1000")
 	assert.True(t, ok)
 	assert.NoError(t, err)
 
-	// success - sub-bucket, false
+	// success - pair, false
 	ok, err = Exists(db, "alpha", "nope")
 	assert.False(t, ok)
 	assert.NoError(t, err)
@@ -69,7 +67,7 @@ func TestGet(t *testing.T) {
 
 	// success
 	pairs, err := Get(db, "alpha", "1000")
-	assert.Equal(t, test.MockData["alpha"]["1000"], pairs)
+	assert.Equal(t, "Alpha one.\n", pairs)
 	assert.NoError(t, err)
 }
 
@@ -82,7 +80,7 @@ func TestList(t *testing.T) {
 	assert.Equal(t, []string{"alpha", "bravo"}, bucks)
 	assert.NoError(t, err)
 
-	// success - sub-buckets
+	// success - pairs
 	subbs, err := List(db, "alpha")
 	assert.Equal(t, []string{"1000", "1100"}, subbs)
 	assert.NoError(t, err)
@@ -93,19 +91,14 @@ func TestSet(t *testing.T) {
 	db := test.MockDB(t)
 
 	// success
-	err := Set(db, "charlie", "3000", map[string]string{"body": "Charlie.\n"})
+	err := Set(db, "charlie", "3000", "Charlie.\n")
 	assert.NoError(t, err)
 
 	// success - check database
 	db.View(func(tx *bbolt.Tx) error {
 		bobj := tx.Bucket([]byte("charlie"))
-		assert.NotNil(t, bobj)
-
-		sobj := bobj.Bucket([]byte("3000"))
-		assert.NotNil(t, sobj)
-
-		body := sobj.Get([]byte("body"))
-		assert.Equal(t, "Charlie.\n", string(body))
+		data := bobj.Get([]byte("3000"))
+		assert.Equal(t, "Charlie.\n", string(data))
 		return nil
 	})
 }

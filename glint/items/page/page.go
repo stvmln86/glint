@@ -14,9 +14,8 @@ import (
 type Page struct {
 	DB   *bbolt.DB
 	Name string
-	Body string
-	Hash string
 	Init string
+	Body string
 }
 
 // Create creates and returns a new Page.
@@ -31,10 +30,10 @@ func Create(db *bbolt.DB, name, body string) (*Page, error) {
 		return nil, fmt.Errorf("cannot append note %s - %w", name, err)
 	}
 
+	body = neat.Body(body)
 	init := neat.Unix(time.Now())
-	pairs := neat.Pairs(body)
 
-	if err := bolt.Set(db, name, init, pairs); err != nil {
+	if err := bolt.Set(db, name, init, body); err != nil {
 		return nil, fmt.Errorf("cannot create page %s/%s - %w", name, init, err)
 	}
 
@@ -53,12 +52,12 @@ func Get(db *bbolt.DB, name, init string) (*Page, error) {
 		return nil, fmt.Errorf("cannot get page %s/%s - %w", name, init, err)
 	}
 
-	pairs, err := bolt.Get(db, name, init)
+	body, err := bolt.Get(db, name, init)
 	if err != nil {
 		return nil, fmt.Errorf("cannot get page %s/%s - %w", name, init, err)
 	}
 
-	return &Page{db, name, pairs["body"], pairs["hash"], init}, nil
+	return &Page{db, name, init, body}, nil
 }
 
 // Delete deletes the existing Page.
