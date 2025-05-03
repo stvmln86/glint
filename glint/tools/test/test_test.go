@@ -12,8 +12,8 @@ func TestGet(t *testing.T) {
 	db := MockDB(t)
 
 	// success
-	data := Get(db, "alpha", "1000", "name")
-	assert.Equal(t, "alpha", data)
+	data := Get(db, "alpha", "1000", "body")
+	assert.Equal(t, "Alpha (old).", data)
 }
 
 func TestSet(t *testing.T) {
@@ -21,9 +21,9 @@ func TestSet(t *testing.T) {
 	db := MockDB(t)
 
 	// success
-	Set(db, "alpha", "1000", "name", "test")
-	data := Get(db, "alpha", "1000", "name")
-	assert.Equal(t, "test", data)
+	Set(db, "alpha", "1000", "body", "Test.")
+	data := Get(db, "alpha", "1000", "body")
+	assert.Equal(t, "Test.", data)
 }
 
 func TestMockDB(t *testing.T) {
