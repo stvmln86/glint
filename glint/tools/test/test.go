@@ -11,27 +11,27 @@ import (
 // MockData is a map of mock database data for unit testing.
 var MockData = map[string]map[string]map[string]string{
 	"alpha": {
-		"1000.000": {
+		"1000": {
 			"name": "alpha",
 			"body": "Alpha (old).",
 			"hash": "2038ace1dd703f9661fd9657b7a842257c0082e640103d702f31f0264aa39050",
-			"init": "1000.000",
+			"init": "1000",
 		},
 
-		"1100.000": {
+		"2000": {
 			"name": "alpha",
 			"body": "Alpha (new).",
 			"hash": "c4eb3161e551ad770fe506df8e76cae3f36785a243482edae532703100a103ea",
-			"init": "1100.000",
+			"init": "2000",
 		},
 	},
 
 	"bravo": {
-		"2000.000": {
+		"3000": {
 			"name": "bravo",
 			"body": "Bravo.",
 			"hash": "65c1f9293df813a992d69f4fb83d430530e40dc8630409b30d0f8e58b07b1e14",
-			"init": "2000.000",
+			"init": "3000",
 		},
 	},
 }

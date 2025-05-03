@@ -12,7 +12,7 @@ func TestGet(t *testing.T) {
 	db := MockDB(t)
 
 	// success
-	data := Get(db, "alpha", "1000.000", "name")
+	data := Get(db, "alpha", "1000", "name")
 	assert.Equal(t, "alpha", data)
 }
 
@@ -21,8 +21,8 @@ func TestSet(t *testing.T) {
 	db := MockDB(t)
 
 	// success
-	Set(db, "alpha", "1000.000", "name", "test")
-	data := Get(db, "alpha", "1000.000", "name")
+	Set(db, "alpha", "1000", "name", "test")
+	data := Get(db, "alpha", "1000", "name")
 	assert.Equal(t, "test", data)
 }
 
