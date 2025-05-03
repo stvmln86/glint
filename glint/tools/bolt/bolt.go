@@ -21,11 +21,15 @@ func Exists(db *bbolt.DB, name string) (bool, error) {
 }
 
 // Get returns an existing bucket from a database.
-func Get(db *bbolt.DB, name string) (map[string]string, error) {
+func Get(db *bbolt.DB, name string) (map[string]string, bool, error) {
+	var ok bool
 	var pairs = make(map[string]string)
 
-	return pairs, db.View(func(tx *bbolt.Tx) error {
-		if bckt := tx.Bucket([]byte(name)); bckt != nil {
+	return pairs, ok, db.View(func(tx *bbolt.Tx) error {
+		bckt := tx.Bucket([]byte(name))
+		ok = bckt != nil
+
+		if bckt != nil {
 			return bckt.ForEach(func(attr, data []byte) error {
 				pairs[string(attr)] = string(data)
 				return nil

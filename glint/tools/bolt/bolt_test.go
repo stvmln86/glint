@@ -43,9 +43,16 @@ func TestGet(t *testing.T) {
 	// setup
 	db := test.MockDB(t)
 
-	// success
-	pairs, err := Get(db, "alpha")
+	// success - note exists
+	pairs, ok, err := Get(db, "alpha")
 	assert.Equal(t, test.MockData["alpha"], pairs)
+	assert.True(t, ok)
+	assert.NoError(t, err)
+
+	// success - note does not exist
+	pairs, ok, err = Get(db, "nope")
+	assert.Empty(t, pairs)
+	assert.False(t, ok)
 	assert.NoError(t, err)
 }
 
