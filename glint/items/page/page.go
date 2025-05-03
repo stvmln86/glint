@@ -22,6 +22,15 @@ type Page struct {
 // Create creates and returns a new Page.
 func Create(db *bbolt.DB, name, body string) (*Page, error) {
 	name = neat.Name(name)
+	ok, err := bolt.Exists(db, name)
+
+	switch {
+	case !ok:
+		return nil, fmt.Errorf("cannot append note %s - does not exist", name)
+	case err != nil:
+		return nil, fmt.Errorf("cannot append note %s - %w", name, err)
+	}
+
 	init := neat.Unix(time.Now())
 	pairs := neat.Pairs(body)
 

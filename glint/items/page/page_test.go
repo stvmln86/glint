@@ -35,6 +35,11 @@ func TestCreate(t *testing.T) {
 	pairs, err := bolt.Get(db, "alpha", init)
 	assert.Equal(t, "Alpha (test).\n", pairs["body"])
 	assert.NoError(t, err)
+
+	// error - does not exist
+	page, err = Create(db, "nope", "Body.\n")
+	assert.Nil(t, page)
+	assert.EqualError(t, err, "cannot append note nope - does not exist")
 }
 
 func TestGet(t *testing.T) {
