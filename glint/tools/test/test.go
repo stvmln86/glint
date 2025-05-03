@@ -37,10 +37,10 @@ var MockData = map[string]map[string]map[string]string{
 }
 
 // Get returns a sub-bucket value from a database.
-func Get(dbse *bbolt.DB, buck, subb, attr string) string {
+func Get(db *bbolt.DB, buck, subb, attr string) string {
 	var data string
 
-	dbse.View(func(tx *bbolt.Tx) error {
+	db.View(func(tx *bbolt.Tx) error {
 		bobj := tx.Bucket([]byte(buck))
 		sobj := bobj.Bucket([]byte(subb))
 		data = string(sobj.Get([]byte(attr)))
@@ -51,8 +51,8 @@ func Get(dbse *bbolt.DB, buck, subb, attr string) string {
 }
 
 // Set sets a sub-bucket value into a database.
-func Set(dbse *bbolt.DB, buck, subb, attr, data string) {
-	dbse.Update(func(tx *bbolt.Tx) error {
+func Set(db *bbolt.DB, buck, subb, attr, data string) {
+	db.Update(func(tx *bbolt.Tx) error {
 		bobj := tx.Bucket([]byte(buck))
 		sobj := bobj.Bucket([]byte(subb))
 		sobj.Put([]byte(attr), []byte(data))
@@ -63,9 +63,9 @@ func Set(dbse *bbolt.DB, buck, subb, attr, data string) {
 // MockDB returns a temporary database populated with MockData.
 func MockDB(t *testing.T) *bbolt.DB {
 	dest := filepath.Join(t.TempDir(), "mock.db")
-	dbse, _ := bbolt.Open(dest, 0777, nil)
+	db, _ := bbolt.Open(dest, 0777, nil)
 
-	dbse.Update(func(tx *bbolt.Tx) error {
+	db.Update(func(tx *bbolt.Tx) error {
 		for buck, items := range MockData {
 			bobj, _ := tx.CreateBucket([]byte(buck))
 
@@ -81,5 +81,5 @@ func MockDB(t *testing.T) *bbolt.DB {
 		return nil
 	})
 
-	return dbse
+	return db
 }

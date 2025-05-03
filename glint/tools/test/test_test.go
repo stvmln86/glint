@@ -9,30 +9,30 @@ import (
 
 func TestGet(t *testing.T) {
 	// setup
-	dbse := MockDB(t)
+	db := MockDB(t)
 
 	// success
-	data := Get(dbse, "alpha", "1000.000", "name")
+	data := Get(db, "alpha", "1000.000", "name")
 	assert.Equal(t, "alpha", data)
 }
 
 func TestSet(t *testing.T) {
 	// setup
-	dbse := MockDB(t)
+	db := MockDB(t)
 
 	// success
-	Set(dbse, "alpha", "1000.000", "name", "test")
-	data := Get(dbse, "alpha", "1000.000", "name")
+	Set(db, "alpha", "1000.000", "name", "test")
+	data := Get(db, "alpha", "1000.000", "name")
 	assert.Equal(t, "test", data)
 }
 
 func TestMockDB(t *testing.T) {
 	// success
-	dbse := MockDB(t)
-	assert.NotNil(t, dbse)
+	db := MockDB(t)
+	assert.NotNil(t, db)
 
-	// success - check data
-	dbse.View(func(tx *bbolt.Tx) error {
+	// success - check mock data
+	db.View(func(tx *bbolt.Tx) error {
 		for buck, items := range MockData {
 			bobj := tx.Bucket([]byte(buck))
 
