@@ -23,7 +23,7 @@ func Create(db *bbolt.DB, name, body string) (*Note, error) {
 	pairs := neat.Pairs(body)
 
 	if err := bolt.Set(db, name, init, pairs); err != nil {
-		return nil, fmt.Errorf("cannot create note %q - %w", name, err)
+		return nil, fmt.Errorf("cannot create note %s - %w", name, err)
 	}
 
 	return Get(db, name)
@@ -36,9 +36,9 @@ func Get(db *bbolt.DB, name string) (*Note, error) {
 
 	switch {
 	case !ok:
-		return nil, fmt.Errorf("cannot get note %q - does not exist", name)
+		return nil, fmt.Errorf("cannot get note %s - does not exist", name)
 	case err != nil:
-		return nil, fmt.Errorf("cannot get note %q - %w", name, err)
+		return nil, fmt.Errorf("cannot get note %s - %w", name, err)
 	}
 
 	return &Note{db, name}, nil
@@ -47,7 +47,7 @@ func Get(db *bbolt.DB, name string) (*Note, error) {
 // Delete deletes the existing Note.
 func (n *Note) Delete() error {
 	if err := bolt.Delete(n.DB, n.Name); err != nil {
-		return fmt.Errorf("cannot delete note %q - %w", n.Name, err)
+		return fmt.Errorf("cannot delete note %s - %w", n.Name, err)
 	}
 
 	return nil
@@ -57,7 +57,7 @@ func (n *Note) Delete() error {
 func (n *Note) Exists() (bool, error) {
 	ok, err := bolt.Exists(n.DB, n.Name)
 	if err != nil {
-		return false, fmt.Errorf("cannot check note %q - %w", n.Name, err)
+		return false, fmt.Errorf("cannot check note %s - %w", n.Name, err)
 	}
 
 	return ok, nil

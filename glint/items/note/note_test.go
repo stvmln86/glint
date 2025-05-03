@@ -18,7 +18,7 @@ func xNote(t *testing.T) *Note {
 func TestCreate(t *testing.T) {
 	// setup
 	db := test.MockDB(t)
-	unix := neat.Unix(time.Now())
+	init := neat.Unix(time.Now())
 
 	// success
 	note, err := Create(db, "charlie", "Charlie.\n")
@@ -27,7 +27,7 @@ func TestCreate(t *testing.T) {
 	assert.NoError(t, err)
 
 	// success - check database
-	pairs, err := bolt.Get(db, "charlie", unix)
+	pairs, err := bolt.Get(db, "charlie", init)
 	assert.Equal(t, "Charlie.\n", pairs["body"])
 	assert.NoError(t, err)
 }
@@ -45,7 +45,7 @@ func TestGet(t *testing.T) {
 	// error - does not exist
 	note, err = Get(db, "nope")
 	assert.Nil(t, note)
-	assert.EqualError(t, err, `cannot get note "nope" - does not exist`)
+	assert.EqualError(t, err, "cannot get note nope - does not exist")
 }
 
 func TestDelete(t *testing.T) {
