@@ -105,7 +105,7 @@ func TestSet(t *testing.T) {
 		assert.NotNil(t, sobj)
 
 		body := sobj.Get([]byte("body"))
-		assert.Equal(t, "data", string(body))
+		assert.Equal(t, "Charlie.\n", string(body))
 		return nil
 	})
 }
