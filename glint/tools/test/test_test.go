@@ -14,11 +14,11 @@ func TestMockDB(t *testing.T) {
 
 	// success - check database
 	db.View(func(tx *bbolt.Tx) error {
-		for buck, pairs := range MockData {
-			bobj := tx.Bucket([]byte(buck))
+		for name, pairs := range MockData {
+			bckt := tx.Bucket([]byte(name))
 
 			for attr, want := range pairs {
-				data := bobj.Get([]byte(attr))
+				data := bckt.Get([]byte(attr))
 				assert.Equal(t, want, string(data))
 			}
 		}

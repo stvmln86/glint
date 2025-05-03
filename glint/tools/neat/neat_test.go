@@ -13,6 +13,12 @@ func TestBody(t *testing.T) {
 	assert.Equal(t, "Body.\n", body)
 }
 
+func TestHash(t *testing.T) {
+	// success
+	hash := Hash("data")
+	assert.Equal(t, "3a6eb0790f39ac87c94f3856b2dd2c5d110e6811602261a9a923d3bb23adc8b7", hash)
+}
+
 func TestName(t *testing.T) {
 	// success
 	name := Name("\tNAME\n")
@@ -21,7 +27,7 @@ func TestName(t *testing.T) {
 
 func TestTime(t *testing.T) {
 	// setup
-	want := time.UnixMilli(1000)
+	want := time.Unix(1000, 0)
 
 	// success
 	tobj := Time("1000")
@@ -30,7 +36,7 @@ func TestTime(t *testing.T) {
 
 func TestUnix(t *testing.T) {
 	// setup
-	tobj := time.UnixMilli(1000)
+	tobj := time.Unix(1000, 0)
 
 	// success
 	unix := Unix(tobj)

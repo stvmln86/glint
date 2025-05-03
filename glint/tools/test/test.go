@@ -11,12 +11,15 @@ import (
 // MockData is a map of mock database data for unit testing.
 var MockData = map[string]map[string]string{
 	"alpha": {
-		"1000": "Alpha one.\n",
-		"1100": "Alpha two.\n",
+		"body": "Alpha.\n",
+		"hash": "cd9fc009cdc95c830fd057df66c0c363d476f4dad534a2125fda9373d357e702",
+		"init": "1000",
 	},
 
 	"bravo": {
-		"2000": "Bravo.\n",
+		"body": "Bravo.\n",
+		"hash": "8411871deeec869d84512c3414dca33589881ebac95a886bc4bd5a4e172bfe7c",
+		"init": "2000",
 	},
 }
 
@@ -26,11 +29,11 @@ func MockDB(t *testing.T) *bbolt.DB {
 	db, _ := bbolt.Open(dest, 0777, nil)
 
 	db.Update(func(tx *bbolt.Tx) error {
-		for buck, pairs := range MockData {
-			bobj, _ := tx.CreateBucket([]byte(buck))
+		for name, pairs := range MockData {
+			bckt, _ := tx.CreateBucket([]byte(name))
 
 			for attr, data := range pairs {
-				bobj.Put([]byte(attr), []byte(data))
+				bckt.Put([]byte(attr), []byte(data))
 			}
 		}
 

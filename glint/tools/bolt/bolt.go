@@ -3,83 +3,65 @@ package bolt
 
 import "go.etcd.io/bbolt"
 
-// Delete deletes an existing bucket or pair  from a database.
-func Delete(db *bbolt.DB, buck string, attr ...string) error {
+// Delete deletes an existing bucket from a database.
+func Delete(db *bbolt.DB, name string) error {
 	return db.Update(func(tx *bbolt.Tx) error {
-		if len(attr) == 0 {
-			return tx.DeleteBucket([]byte(buck))
-		}
-
-		if bobj := tx.Bucket([]byte(buck)); bobj != nil {
-			return bobj.Delete([]byte(attr[0]))
-		}
-
-		return nil
+		return tx.DeleteBucket([]byte(name))
 	})
 }
 
-// Exists returns true if a bucket or pair exists in a database.
-func Exists(db *bbolt.DB, buck string, attr ...string) (bool, error) {
+// Exists returns true if a bucket exists in a database.
+func Exists(db *bbolt.DB, name string) (bool, error) {
 	var ok bool
 
 	return ok, db.View(func(tx *bbolt.Tx) error {
-		if len(attr) == 0 {
-			ok = tx.Bucket([]byte(buck)) != nil
-			return nil
-		}
+		ok = tx.Bucket([]byte(name)) != nil
+		return nil
+	})
+}
 
-		if bobj := tx.Bucket([]byte(buck)); bobj != nil {
-			ok = bobj.Get([]byte(attr[0])) != nil
+// Get returns an existing bucket from a database.
+func Get(db *bbolt.DB, name string) (map[string]string, error) {
+	var pairs = make(map[string]string)
+
+	return pairs, db.View(func(tx *bbolt.Tx) error {
+		if bckt := tx.Bucket([]byte(name)); bckt != nil {
+			return bckt.ForEach(func(attr, data []byte) error {
+				pairs[string(attr)] = string(data)
+				return nil
+			})
 		}
 
 		return nil
 	})
 }
 
-// Get returns an existing bucket pair's value from from a database.
-func Get(db *bbolt.DB, buck, attr string) (string, error) {
-	var data string
-
-	return data, db.View(func(tx *bbolt.Tx) error {
-		if bobj := tx.Bucket([]byte(buck)); bobj != nil {
-			data = string(bobj.Get([]byte(attr)))
-		}
-
-		return nil
-	})
-}
-
-// List returns all existing bucket names or bucket pair names from a database.
-func List(db *bbolt.DB, buck ...string) ([]string, error) {
+// List returns all existing bucket names in a database.
+func List(db *bbolt.DB) ([]string, error) {
 	var names []string
 
 	return names, db.View(func(tx *bbolt.Tx) error {
-		if len(buck) == 0 {
-			return tx.ForEach(func(buck []byte, _ *bbolt.Bucket) error {
-				names = append(names, string(buck))
-				return nil
-			})
-		}
-
-		if bobj := tx.Bucket([]byte(buck[0])); bobj != nil {
-			return bobj.ForEach(func(attr, _ []byte) error {
-				names = append(names, string(attr))
-				return nil
-			})
-		}
-
-		return nil
+		return tx.ForEach(func(name []byte, _ *bbolt.Bucket) error {
+			names = append(names, string(name))
+			return nil
+		})
 	})
 }
 
-// Set sets a pair in a new or existing bucket in a database.
-func Set(db *bbolt.DB, buck, attr, data string) error {
+// Set sets a new or existing bucket into a database.
+func Set(db *bbolt.DB, name string, pairs map[string]string) error {
 	return db.Update(func(tx *bbolt.Tx) error {
-		bobj, err := tx.CreateBucketIfNotExists([]byte(buck))
+		bckt, err := tx.CreateBucketIfNotExists([]byte(name))
 		if err != nil {
 			return err
 		}
 
-		return bobj.Put([]byte(attr), []byte(data))
+		for attr, data := range pairs {
+			if err := bckt.Put([]byte(attr), []byte(data)); err != nil {
+				return err
+			}
+		}
+
+		return nil
 	})
 }
