@@ -54,14 +54,21 @@ func Get(db *bbolt.DB, buck, subb string) (map[string]string, error) {
 	})
 }
 
-// List returns the sub-bucket names of an existing bucket from a database.
-func List(db *bbolt.DB, buck string) ([]string, error) {
-	var subbs []string
+// List returns all existing bucket or sub-bucket names from a database.
+func List(db *bbolt.DB, buck ...string) ([]string, error) {
+	var names []string
 
-	return subbs, db.View(func(tx *bbolt.Tx) error {
-		if bobj := tx.Bucket([]byte(buck)); bobj != nil {
+	return names, db.View(func(tx *bbolt.Tx) error {
+		if len(buck) == 0 {
+			return tx.ForEach(func(buck []byte, _ *bbolt.Bucket) error {
+				names = append(names, string(buck))
+				return nil
+			})
+		}
+
+		if bobj := tx.Bucket([]byte(buck[0])); bobj != nil {
 			return bobj.ForEachBucket(func(subb []byte) error {
-				subbs = append(subbs, string(subb))
+				names = append(names, string(subb))
 				return nil
 			})
 		}

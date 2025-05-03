@@ -76,7 +76,12 @@ func TestList(t *testing.T) {
 	// setup
 	db := test.MockDB(t)
 
-	// success
+	// success - buckets
+	bucks, err := List(db)
+	assert.Equal(t, []string{"alpha", "bravo"}, bucks)
+	assert.NoError(t, err)
+
+	// success - sub-buckets
 	subbs, err := List(db, "alpha")
 	assert.Equal(t, []string{"1000", "2000"}, subbs)
 	assert.NoError(t, err)
