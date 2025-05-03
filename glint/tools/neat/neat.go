@@ -26,6 +26,16 @@ func Name(name string) string {
 	return strings.TrimSpace(name)
 }
 
+// Pairs returns a sub-bucket pairs map from a body string.
+func Pairs(body string) map[string]string {
+	body = Body(body)
+
+	return map[string]string{
+		"body": body,
+		"hash": Hash(body),
+	}
+}
+
 // Time returns a Time object from a unix milliseconds string.
 func Time(unix string) time.Time {
 	mill, _ := strconv.ParseInt(unix, 10, 64)
