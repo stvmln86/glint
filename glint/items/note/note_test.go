@@ -71,3 +71,41 @@ func TestExists(t *testing.T) {
 	assert.True(t, ok)
 	assert.NoError(t, err)
 }
+
+func TestLatest(t *testing.T) {
+	// setup
+	note := xNote(t)
+
+	// success
+	page, err := note.Latest()
+	assert.Equal(t, "1100", page.Init)
+	assert.NoError(t, err)
+}
+
+func TestList(t *testing.T) {
+	// setup
+	note := xNote(t)
+
+	// success
+	pages, err := note.List()
+	assert.Len(t, pages, 2)
+	assert.Equal(t, "1000", pages[0].Init)
+	assert.Equal(t, "1100", pages[1].Init)
+	assert.NoError(t, err)
+}
+
+func TestUpdate(t *testing.T) {
+	// setup
+	note := xNote(t)
+	init := neat.Unix(time.Now())
+
+	// success
+	page, err := note.Update("Body.\n")
+	assert.Equal(t, init, page.Init)
+	assert.NoError(t, err)
+
+	// success - check database
+	pairs, err := bolt.Get(note.DB, "alpha", init)
+	assert.Equal(t, "Body.\n", pairs["body"])
+	assert.NoError(t, err)
+}

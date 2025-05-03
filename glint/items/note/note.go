@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/stvmln86/glint/glint/items/page"
 	"github.com/stvmln86/glint/glint/tools/bolt"
 	"github.com/stvmln86/glint/glint/tools/neat"
 	"go.etcd.io/bbolt"
@@ -61,4 +62,39 @@ func (n *Note) Exists() (bool, error) {
 	}
 
 	return ok, nil
+}
+
+// Latest returns the latest Page in the Note.
+func (n *Note) Latest() (*page.Page, error) {
+	inits, err := bolt.List(n.DB, n.Name)
+	if err != nil {
+		return nil, fmt.Errorf("cannot list note %s - %w", n.Name, err)
+	}
+
+	return page.Get(n.DB, n.Name, inits[len(inits)-1])
+}
+
+// List returns all Pages in the Note.
+func (n *Note) List() ([]*page.Page, error) {
+	inits, err := bolt.List(n.DB, n.Name)
+	if err != nil {
+		return nil, fmt.Errorf("cannot list note %s - %w", n.Name, err)
+	}
+
+	var pages []*page.Page
+	for _, init := range inits {
+		page, err := page.Get(n.DB, n.Name, init)
+		if err != nil {
+			return nil, err
+		}
+
+		pages = append(pages, page)
+	}
+
+	return pages, nil
+}
+
+// Update appends and returns a new Page to the Note.
+func (n *Note) Update(body string) (*page.Page, error) {
+	return page.Create(n.DB, n.Name, body)
 }
