@@ -32,7 +32,7 @@ func TestCreate(t *testing.T) {
 	assert.True(t, ok)
 	assert.NoError(t, err)
 
-	// error - already exists,
+	// error - already exists
 	note, err = Create(db, "charlie", "Charlie.\n")
 	assert.Nil(t, note)
 	assert.EqualError(t, err, `cannot create note "charlie" - already exists`)
