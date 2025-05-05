@@ -1,7 +1,6 @@
 package test
 
 import (
-	"errors"
 	"testing"
 )
 
@@ -11,14 +10,6 @@ func TestAssertDire(t *testing.T) {
 
 	// success
 	AssertDire(t, dire, MockFiles)
-}
-
-func TestAssertErr(t *testing.T) {
-	// setup
-	err := errors.New(`test "error"`)
-
-	// success
-	AssertErr(t, err, "%s %q")
 }
 
 func TestAssertFile(t *testing.T) {

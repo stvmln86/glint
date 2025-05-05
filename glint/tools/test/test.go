@@ -4,7 +4,6 @@ package test
 import (
 	"os"
 	"path/filepath"
-	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -23,13 +22,6 @@ func AssertDire(t *testing.T, dire string, files map[string]string) {
 		orig := filepath.Join(dire, base)
 		AssertFile(t, orig, body)
 	}
-}
-
-// AssertErr asserts an error matches a format string.
-func AssertErr(t *testing.T, err error, form string) {
-	form = strings.ReplaceAll(form, "%q", `".*"`)
-	form = strings.ReplaceAll(form, "%s", `.*`)
-	assert.Regexp(t, form, err.Error())
 }
 
 // AssertFile asserts a file's body is equal to a string.
