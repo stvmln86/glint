@@ -54,6 +54,12 @@ func TestRename(t *testing.T) {
 	assert.Equal(t, "/dire/test.extn", dest)
 }
 
+func TestReextn(t *testing.T) {
+	// success
+	dest := Reextn("/dire/name.extn", ".test")
+	assert.Equal(t, "/dire/name.test", dest)
+}
+
 func TestName(t *testing.T) {
 	// success - real extension
 	extn := Name("/dire/name.extn")

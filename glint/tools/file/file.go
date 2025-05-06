@@ -13,7 +13,7 @@ import (
 
 // Create creates a new file containing a string.
 func Create(dest, body string, mode os.FileMode) error {
-	base := filepath.Base(dest)
+	base := path.Base(dest)
 
 	if Exists(dest) {
 		return fmt.Errorf("cannot create file %q - already exists", base)
@@ -26,15 +26,16 @@ func Create(dest, body string, mode os.FileMode) error {
 	return nil
 }
 
-// Delete deletes an existing file.
+// Delete "deletes" an existing file by changing its extension to ".trash".
 func Delete(orig string) error {
-	base := filepath.Base(orig)
+	base := path.Base(orig)
 
 	if !Exists(orig) {
 		return fmt.Errorf("cannot delete file %q - does not exist", base)
 	}
 
-	if err := os.Remove(orig); err != nil {
+	dest := path.Reextn(orig, ".trash")
+	if err := os.Rename(orig, dest); err != nil {
 		return fmt.Errorf("cannot delete file %q - %w", base, err)
 	}
 
@@ -56,7 +57,7 @@ func Glob(dire, extn string) []string {
 
 // Read returns an existing file's body as a string.
 func Read(orig string) (string, error) {
-	base := filepath.Base(orig)
+	base := path.Base(orig)
 
 	if !Exists(orig) {
 		return "", fmt.Errorf("cannot read file %q - does not exist", base)
@@ -72,7 +73,7 @@ func Read(orig string) (string, error) {
 
 // Rename renames an existing file to a different name.
 func Rename(orig, name string) error {
-	base := filepath.Base(orig)
+	base := path.Base(orig)
 	dest := path.Rename(orig, name)
 
 	if !Exists(orig) {
@@ -88,7 +89,7 @@ func Rename(orig, name string) error {
 
 // Search returns true if an existing file's body contains a case-insensitive substring.
 func Search(orig, subs string) (bool, error) {
-	base := filepath.Base(orig)
+	base := path.Base(orig)
 
 	if !Exists(orig) {
 		return false, fmt.Errorf("cannot search file %q - does not exist", base)
@@ -106,7 +107,7 @@ func Search(orig, subs string) (bool, error) {
 
 // Update overwrites an existing file's body with a string.
 func Update(orig, body string, mode os.FileMode) error {
-	base := filepath.Base(orig)
+	base := path.Base(orig)
 
 	if !Exists(orig) {
 		return fmt.Errorf("cannot update file %q - does not exist", base)

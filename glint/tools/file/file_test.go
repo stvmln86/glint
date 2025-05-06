@@ -26,10 +26,12 @@ func TestCreate(t *testing.T) {
 func TestDelete(t *testing.T) {
 	// setup
 	orig := test.MockFile(t, "alpha.extn")
+	dest := path.Reextn(orig, ".trash")
 
 	// success
 	err := Delete(orig)
 	assert.NoFileExists(t, orig)
+	assert.FileExists(t, dest)
 	assert.NoError(t, err)
 
 	// error - does not exist
