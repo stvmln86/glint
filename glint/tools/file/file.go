@@ -70,10 +70,10 @@ func Read(orig string) (string, error) {
 	return string(bytes), nil
 }
 
-// Reslug renames an existing file to a different slug.
-func Reslug(orig, slug string) error {
+// Rename renames an existing file to a different name.
+func Rename(orig, name string) error {
 	base := filepath.Base(orig)
-	dest := path.Reslug(orig, slug)
+	dest := path.Rename(orig, name)
 
 	if !Exists(orig) {
 		return fmt.Errorf("cannot rename file %q - does not exist", base)

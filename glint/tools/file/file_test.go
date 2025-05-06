@@ -76,19 +76,19 @@ func TestRead(t *testing.T) {
 	assert.EqualError(t, err, `cannot read file "nope.extn" - does not exist`)
 }
 
-func TestReslug(t *testing.T) {
+func TestRename(t *testing.T) {
 	// setup
 	orig := test.MockFile(t, "alpha.extn")
-	dest := path.Reslug(orig, "delta")
+	dest := path.Rename(orig, "delta")
 
 	// success
-	err := Reslug(orig, "delta")
+	err := Rename(orig, "delta")
 	assert.NoFileExists(t, orig)
 	assert.FileExists(t, dest)
 	assert.NoError(t, err)
 
 	// error - does not exist
-	err = Reslug("/nope.extn", dest)
+	err = Rename("/nope.extn", dest)
 	assert.EqualError(t, err, `cannot rename file "nope.extn" - does not exist`)
 }
 

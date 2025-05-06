@@ -26,27 +26,27 @@ func Extn(orig string) string {
 	return ""
 }
 
-// Join returns a joined path from a directory, slug and extension.
-func Join(dire, slug, extn string) string {
-	return filepath.Join(dire, slug+extn)
+// Join returns a joined path from a directory, name and extension.
+func Join(dire, name, extn string) string {
+	return filepath.Join(dire, name+extn)
 }
 
-// Match returns true if a path's slug contains a case-insensitive substring.
+// Match returns true if a path's name contains a case-insensitive substring.
 func Match(orig, subs string) bool {
 	subs = strings.ToLower(subs)
-	slug := strings.ToLower(Slug(orig))
-	return strings.Contains(slug, subs)
+	name := strings.ToLower(Name(orig))
+	return strings.Contains(name, subs)
 }
 
-// Reslug returns a path with a different slug.
-func Reslug(orig, slug string) string {
+// Rename returns a path with a different name.
+func Rename(orig, name string) string {
 	dire := Dire(orig)
 	extn := Extn(orig)
-	return Join(dire, slug, extn)
+	return Join(dire, name, extn)
 }
 
-// Slug returns a path's slug.
-func Slug(orig string) string {
+// Name returns a path's name.
+func Name(orig string) string {
 	base := Base(orig)
 	if clip := strings.Index(base, "."); clip != -1 {
 		return base[:clip]
