@@ -55,7 +55,15 @@ func TestRename(t *testing.T) {
 }
 
 func TestName(t *testing.T) {
-	// success
-	name := Name("/dire/name.extn")
-	assert.Equal(t, "name", name)
+	// success - real extension
+	extn := Name("/dire/name.extn")
+	assert.Equal(t, "name", extn)
+
+	// success - bare extension
+	extn = Name("/dire/name.")
+	assert.Equal(t, "name", extn)
+
+	// success - no extension
+	extn = Name("/dire/name")
+	assert.Equal(t, "name", extn)
 }

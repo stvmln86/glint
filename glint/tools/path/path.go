@@ -52,5 +52,5 @@ func Name(orig string) string {
 		return base[:clip]
 	}
 
-	return ""
+	return base
 }
