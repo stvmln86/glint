@@ -38,14 +38,7 @@ func Match(orig, subs string) bool {
 	return strings.Contains(slug, subs)
 }
 
-// Reextn returns a path with a changed extension.
-func Reextn(orig, extn string) string {
-	dire := Dire(orig)
-	slug := Slug(orig)
-	return Join(dire, slug, extn)
-}
-
-// Reslug returns a path with a changed slug.
+// Reslug returns a path with a different slug.
 func Reslug(orig, slug string) string {
 	dire := Dire(orig)
 	extn := Extn(orig)

@@ -48,12 +48,6 @@ func TestMatch(t *testing.T) {
 	assert.False(t, ok)
 }
 
-func TestReextn(t *testing.T) {
-	// success
-	dest := Reextn("/dire/slug.extn", ".test")
-	assert.Equal(t, "/dire/slug.test", dest)
-}
-
 func TestReslug(t *testing.T) {
 	// success
 	dest := Reslug("/dire/slug.extn", "test")

@@ -2,10 +2,10 @@ package file
 
 import (
 	"path/filepath"
-	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stvmln86/glint/glint/tools/path"
 	"github.com/stvmln86/glint/glint/tools/test"
 )
 
@@ -76,19 +76,19 @@ func TestRead(t *testing.T) {
 	assert.EqualError(t, err, `cannot read file "nope.extn" - does not exist`)
 }
 
-func TestRename(t *testing.T) {
+func TestReslug(t *testing.T) {
 	// setup
 	orig := test.MockFile(t, "alpha.extn")
-	dest := strings.Replace(orig, "alpha", "delta", 1)
+	dest := path.Reslug(orig, "delta")
 
 	// success
-	err := Rename(orig, dest)
+	err := Reslug(orig, "delta")
 	assert.NoFileExists(t, orig)
 	assert.FileExists(t, dest)
 	assert.NoError(t, err)
 
 	// error - does not exist
-	err = Rename("/nope.extn", dest)
+	err = Reslug("/nope.extn", dest)
 	assert.EqualError(t, err, `cannot rename file "nope.extn" - does not exist`)
 }
 

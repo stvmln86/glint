@@ -7,6 +7,8 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/stvmln86/glint/glint/tools/path"
 )
 
 // Create creates a new file containing a string.
@@ -68,9 +70,10 @@ func Read(orig string) (string, error) {
 	return string(bytes), nil
 }
 
-// Rename moves an existing file to a different path.
-func Rename(orig, dest string) error {
+// Reslug renames an existing file to a different slug.
+func Reslug(orig, slug string) error {
 	base := filepath.Base(orig)
+	dest := path.Reslug(orig, slug)
 
 	if !Exists(orig) {
 		return fmt.Errorf("cannot rename file %q - does not exist", base)
