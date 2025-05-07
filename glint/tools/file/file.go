@@ -48,7 +48,7 @@ func Exists(orig string) bool {
 	return !errors.Is(err, os.ErrNotExist)
 }
 
-// Glob returns all paths in a directory matching an extension.
+// Glob returns a sorted slice of all paths in a directory matching an extension.
 func Glob(dire, extn string) []string {
 	glob := filepath.Join(dire, "*"+extn)
 	origs, _ := filepath.Glob(glob)
