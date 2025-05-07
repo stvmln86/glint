@@ -50,14 +50,14 @@ func TestMatch(t *testing.T) {
 
 func TestRename(t *testing.T) {
 	// success
-	dest := Rename("/dire/name.extn", "test")
-	assert.Equal(t, "/dire/test.extn", dest)
+	dest := Rename("/dire/name.extn", "delta")
+	assert.Equal(t, "/dire/delta.extn", dest)
 }
 
 func TestReextn(t *testing.T) {
 	// success
-	dest := Reextn("/dire/name.extn", ".test")
-	assert.Equal(t, "/dire/name.test", dest)
+	dest := Reextn("/dire/name.extn", ".text")
+	assert.Equal(t, "/dire/name.text", dest)
 }
 
 func TestName(t *testing.T) {

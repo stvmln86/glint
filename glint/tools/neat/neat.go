@@ -7,25 +7,25 @@ import (
 	"unicode"
 )
 
-// Body returns a whitespace-trimmed body string.
+// Body returns a whitespace-trimmed body.
 func Body(body string) string {
 	return strings.TrimSpace(body) + "\n"
 }
 
-// Extn returns a lowercase extension string with a leading dot.
+// Extn returns a lowercase extension with a leading dot.
 func Extn(extn string) string {
 	extn = strings.ToLower(extn)
 	extn = strings.TrimSpace(extn)
 	return "." + strings.TrimPrefix(extn, ".")
 }
 
-// Path returns a whitespace-trimmed clean file path.
+// Path returns a whitespace-trimmed cleaned file path.
 func Path(path string) string {
 	path = strings.TrimSpace(path)
 	return filepath.Clean(path)
 }
 
-// Name returns a lowercase alphanumeric (with dashes) name string.
+// Name returns a lowercase alphanumeric name.
 func Name(name string) string {
 	var chars []rune
 	for _, char := range strings.ToLower(name) {

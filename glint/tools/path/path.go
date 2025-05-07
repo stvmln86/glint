@@ -38,14 +38,14 @@ func Match(orig, subs string) bool {
 	return strings.Contains(name, subs)
 }
 
-// Reextn returns a path with a different extension.
+// Reextn returns a path changed to a different extension.
 func Reextn(orig, extn string) string {
 	dire := Dire(orig)
 	name := Name(orig)
 	return Join(dire, name, extn)
 }
 
-// Rename returns a path with a different name.
+// Rename returns a path changed to a different name.
 func Rename(orig, name string) string {
 	dire := Dire(orig)
 	extn := Extn(orig)

@@ -4,6 +4,7 @@ package book
 import (
 	"fmt"
 	"os"
+	"slices"
 
 	"github.com/stvmln86/glint/glint/items/note"
 	"github.com/stvmln86/glint/glint/tools/file"
@@ -79,11 +80,13 @@ func (b *Book) Filter(ffun func(*note.Note) (bool, error)) ([]*note.Note, error)
 	return notes, nil
 }
 
-// List returns all existing Notes in the Book.
+// List returns all existing Notes in the Book, sorted alphanumerically.
 func (b *Book) List() []*note.Note {
 	var notes []*note.Note
+	origs := file.Glob(b.Dire, b.Extn)
+	slices.Sort(origs)
 
-	for _, orig := range file.Glob(b.Dire, b.Extn) {
+	for _, orig := range origs {
 		note := note.New(orig, b.Mode)
 		notes = append(notes, note)
 	}

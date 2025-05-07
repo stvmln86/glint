@@ -20,7 +20,7 @@ func TestNew(t *testing.T) {
 
 	// success
 	note := New(orig, 0777)
-	assert.Contains(t, note.Orig, "alpha.extn")
+	assert.Equal(t, note.Orig, orig)
 	assert.Equal(t, os.FileMode(0777), note.Mode)
 }
 
@@ -76,10 +76,10 @@ func TestRead(t *testing.T) {
 func TestRename(t *testing.T) {
 	// setup
 	note := mockNote(t)
-	dest := path.Rename(note.Orig, "test")
+	dest := path.Rename(note.Orig, "name")
 
 	// success
-	err := note.Rename("test")
+	err := note.Rename("name")
 	assert.NoFileExists(t, note.Orig)
 	assert.FileExists(t, dest)
 	assert.NoError(t, err)
