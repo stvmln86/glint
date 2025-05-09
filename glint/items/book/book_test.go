@@ -12,7 +12,7 @@ import (
 
 func mockBook(t *testing.T) *Book {
 	dire := test.MockDire(t)
-	return New(dire, ".extn", 0777)
+	return New(dire, ".extn", 0666)
 }
 
 func TestNew(t *testing.T) {
@@ -20,10 +20,10 @@ func TestNew(t *testing.T) {
 	dire := test.MockDire(t)
 
 	// success
-	book := New(dire, ".extn", 0777)
+	book := New(dire, ".extn", 0666)
 	assert.Equal(t, dire, book.Dire)
 	assert.Equal(t, ".extn", book.Extn)
-	assert.Equal(t, os.FileMode(0777), book.Mode)
+	assert.Equal(t, os.FileMode(0666), book.Mode)
 }
 
 func TestCreate(t *testing.T) {

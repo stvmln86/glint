@@ -37,7 +37,7 @@ func MockDire(t *testing.T) string {
 
 	for base, body := range MockFiles {
 		dest := filepath.Join(dire, base)
-		os.WriteFile(dest, []byte(body), 0777)
+		os.WriteFile(dest, []byte(body), 0666)
 	}
 
 	return dire
@@ -47,6 +47,6 @@ func MockDire(t *testing.T) string {
 func MockFile(t *testing.T, base string) string {
 	dire := t.TempDir()
 	dest := filepath.Join(dire, base)
-	os.WriteFile(dest, []byte(MockFiles[base]), 0777)
+	os.WriteFile(dest, []byte(MockFiles[base]), 0666)
 	return dest
 }

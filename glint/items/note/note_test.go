@@ -11,7 +11,7 @@ import (
 
 func mockNote(t *testing.T) *Note {
 	orig := test.MockFile(t, "alpha.extn")
-	return New(orig, 0777)
+	return New(orig, 0666)
 }
 
 func TestNew(t *testing.T) {
@@ -19,9 +19,9 @@ func TestNew(t *testing.T) {
 	orig := test.MockFile(t, "alpha.extn")
 
 	// success
-	note := New(orig, 0777)
+	note := New(orig, 0666)
 	assert.Equal(t, note.Orig, orig)
-	assert.Equal(t, os.FileMode(0777), note.Mode)
+	assert.Equal(t, os.FileMode(0666), note.Mode)
 }
 
 func TestDelete(t *testing.T) {

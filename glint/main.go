@@ -26,6 +26,6 @@ func main() {
 	extn, err := clui.Env("GLINT_EXT")
 	try(err)
 
-	book := book.New(dire, extn, 0777)
+	book := book.New(dire, extn, 0666)
 	try(comms.Run(Stdout, book, os.Args[1:]))
 }

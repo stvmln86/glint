@@ -113,7 +113,7 @@ func Update(orig, body string, mode os.FileMode) error {
 		return fmt.Errorf("cannot update file %q - does not exist", base)
 	}
 
-	if err := os.WriteFile(orig, []byte(body), 0777); err != nil {
+	if err := os.WriteFile(orig, []byte(body), mode); err != nil {
 		return fmt.Errorf("cannot update file %q - %w", base, err)
 	}
 
