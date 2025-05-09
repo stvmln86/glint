@@ -33,10 +33,35 @@ func (c *MockCommand) Run(w io.Writer, _ *book.Book, pairs map[string]string) er
 	return nil
 }
 
+func TestGet(t *testing.T) {
+	// setup
+	Commands = map[string]CommandFunc{
+		"mock1": NewMockCommand,
+		"mock2": NewMockCommand,
+	}
+
+	// success
+	cfun, err := Get("mock1")
+	assert.NotNil(t, cfun)
+	assert.NoError(t, err)
+
+	// error - does not exist
+	cfun, err = Get("nope")
+	assert.Nil(t, cfun)
+	assert.EqualError(t, err, `cannot run command "nope" - does not exist`)
+
+	// error - is ambiguous
+	cfun, err = Get("mock")
+	assert.Nil(t, cfun)
+	assert.EqualError(t, err, `cannot run command "mock" - is ambiguous`)
+}
+
 func TestRun(t *testing.T) {
 	// setup
 	w := bytes.NewBuffer(nil)
-	Commands["mock"] = NewMockCommand
+	Commands = map[string]CommandFunc{
+		"mock": NewMockCommand,
+	}
 
 	// success
 	err := Run(w, nil, []string{"mock", "argument"})

@@ -4,6 +4,7 @@ package comms
 import (
 	"fmt"
 	"io"
+	"strings"
 
 	"github.com/stvmln86/glint/glint/items/book"
 	"github.com/stvmln86/glint/glint/tools/clui"
@@ -31,12 +32,31 @@ var Commands = map[string]CommandFunc{
 	// "create": create.New,
 }
 
+// Get returns a CommandFunc from a disambiguated Command name.
+func Get(part string) (CommandFunc, error) {
+	var cfuns []CommandFunc
+	for name, cfun := range Commands {
+		if strings.HasPrefix(name, part) {
+			cfuns = append(cfuns, cfun)
+		}
+	}
+
+	switch len(cfuns) {
+	case 0:
+		return nil, fmt.Errorf("cannot run command %q - does not exist", part)
+	case 1:
+		return cfuns[0], nil
+	default:
+		return nil, fmt.Errorf("cannot run command %q - is ambiguous", part)
+	}
+}
+
 // Run executes an existing Command with an argument slice.
 func Run(w io.Writer, book *book.Book, elems []string) error {
 	name, elems := clui.Split(elems)
-	cfun, ok := Commands[name]
-	if !ok {
-		return fmt.Errorf("cannot run command %q - does not exist", name)
+	cfun, err := Get(name)
+	if err != nil {
+		return err
 	}
 
 	comm, err := cfun()
